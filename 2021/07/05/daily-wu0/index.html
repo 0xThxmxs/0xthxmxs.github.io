@@ -6,15 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="ExplicationsSalut, je vais juste essayer de poster régulièrement des write ups de crackmes qui proviennent de crackme.one en ce mois en Juillet. Pas sur que ça soit vraiment quotidien mais je vais ess">
+    <meta name="description" content="ExplicationsSalut, je vais juste essayer de poster régulièrement des write ups de crackmes qui proviennent de crackme.one en ce mois de Juillet. Pas sur que ça soit vraiment quotidien mais je vais ess">
 <meta property="og:type" content="article">
 <meta property="og:title" content="daily-wu0">
 <meta property="og:url" content="https://0xthxmxs.github.io/2021/07/05/daily-wu0/index.html">
 <meta property="og:site_name" content="0xThxmxs&#39;s blog">
-<meta property="og:description" content="ExplicationsSalut, je vais juste essayer de poster régulièrement des write ups de crackmes qui proviennent de crackme.one en ce mois en Juillet. Pas sur que ça soit vraiment quotidien mais je vais ess">
+<meta property="og:description" content="ExplicationsSalut, je vais juste essayer de poster régulièrement des write ups de crackmes qui proviennent de crackme.one en ce mois de Juillet. Pas sur que ça soit vraiment quotidien mais je vais ess">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-07-05T14:14:00.000Z">
-<meta property="article:modified_time" content="2021-07-05T16:45:29.006Z">
+<meta property="article:modified_time" content="2021-07-05T17:01:13.772Z">
 <meta property="article:author" content="0xThxmxs">
 <meta property="article:tag" content="reverse">
 <meta property="article:tag" content="crackme">
@@ -155,14 +155,14 @@
   
 
   <div class="content" itemprop="articleBody">
-    <h3 id="Explications"><a href="#Explications" class="headerlink" title="Explications"></a>Explications</h3><p>Salut, je vais juste essayer de poster régulièrement des write ups de crackmes qui proviennent de <a target="_blank" rel="noopener" href="https://crackmes.one/">crackme.one</a> en ce mois en Juillet. Pas sur que ça soit vraiment quotidien mais je vais essayer d’être régulier…</p>
+    <h3 id="Explications"><a href="#Explications" class="headerlink" title="Explications"></a>Explications</h3><p>Salut, je vais juste essayer de poster régulièrement des write ups de crackmes qui proviennent de <a target="_blank" rel="noopener" href="https://crackmes.one/">crackme.one</a> en ce mois de Juillet. Pas sur que ça soit vraiment quotidien mais je vais essayer d’être régulier…</p>
 <p>J’écrirai en Français afin que les débutants comme moi puissent comprendre facilement certains concepts.<br>PS : Je vais essayer de trouver des crackmes qui soient à la fois assez faciles mais intéressants.</p>
 <p>Le collègue <a target="_blank" rel="noopener" href="https://twitter.com/eban_non">Eban</a> m’a inspiré en faisant pareil mais sur des concepts informatiques (réseau surtout). C’est très interessant, allez voir : <a target="_blank" rel="noopener" href="https://ilearned.eu.org/">https://ilearned.eu.org/</a></p>
 <h2 id="Jour-1"><a href="#Jour-1" class="headerlink" title="Jour 1"></a>Jour 1</h2><p>Commençons avec un <a target="_blank" rel="noopener" href="https://crackmes.one/crackme/6045838033c5d42c3d016d5e">keygenme</a>…</p>
 <p>On l’ouvre dans <a target="_blank" rel="noopener" href="https://hex-rays.com/ida-free/">IDA</a> (Freeware bien entendu) puis on regarde les strings (<code>Shift+F12</code>) :</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">.rdata:0047604A	0000000B	C	Username: </span><br><span class="line">.rdata:00476055	0000000E	C	License-Key: </span><br><span class="line">.rdata:00476064	00000025	C	License-Key must be 17 letters long.</span><br><span class="line">.rdata:00476089	00000006	C	pause</span><br><span class="line">.rdata:00476093	0000001A	C	Congrats! You cracked it!</span><br><span class="line">.rdata:004760AD	0000001A	C	Sorry, wrong License-Key.</span><br><span class="line">.rdata:004760C7	0000001B	C	Wrong Username, try again!</span><br><span class="line">.rdata:004760E4	0000001F	C	License-Key must contain &#39;KEY&#39;</span><br></pre></td></tr></table></figure>
 
-<p>On peut donc essayer de se rendre à la string qui se trouve en <code>0x0000001A</code> qui nous dit que l’on a réussi :</p>
+<p>On peut donc regarder les XREFS de la string <code>0x0000001A</code> qui nous annonce notre victoire :</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.rdata:00476093 ; const char aCongratsYouCra[]</span><br><span class="line">.rdata:00476093 aCongratsYouCra db &#39;Congrats! You cracked it!&#39;,0</span><br><span class="line">.rdata:00476093                                         ; DATA XREF: _main+D78↑o</span><br></pre></td></tr></table></figure>
 
 <p>Direction <code>_main+D78</code> :</p>
@@ -173,7 +173,7 @@
 <figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">lea</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+var_FC]</span><br><span class="line"><span class="keyword">mov</span>     [<span class="built_in">esp</span>+<span class="number">4</span>], <span class="built_in">eax</span>    <span class="comment">; __rhs</span></span><br><span class="line"><span class="keyword">lea</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+var_104]</span><br><span class="line"><span class="keyword">mov</span>     [<span class="built_in">esp</span>], <span class="built_in">eax</span>      <span class="comment">; __lhs</span></span><br><span class="line"><span class="keyword">call</span>    __ZSteqIcEN9__gnu_cxx11__enable_ifIXsrSt9__is_charIT_E7__valueEbE6__typeERKSbIS3_St11char_traitsIS3_ESaIS3_EESC_ <span class="comment">; std::operator==&lt;char&gt;(std::basic_string&lt;char,std::char_traits&lt;char&gt;,std::allocator&lt;char&gt;&gt; const&amp;,std::basic_string&lt;char,std::char_traits&lt;char&gt;,std::allocator&lt;char&gt;&gt; const&amp;)</span></span><br><span class="line"><span class="keyword">test</span>    <span class="built_in">al</span>, <span class="built_in">al</span></span><br><span class="line"><span class="keyword">jz</span>      short loc_4020E2</span><br></pre></td></tr></table></figure>
 
 <p>Donc pour résumer le programme compare <code>var_FC</code> et <code>var_104</code> et si elles sont égales, il nous affiche notre message de victoire (donc… c’est gagné).</p>
-<p>Il est temps de débugger (noud allons utiliser x64dbg mais n’importe lequel peut faire l’affaire).</p>
+<p>Il est temps de débugger (nous allons utiliser x64dbg mais n’importe quel outil similaire peut faire l’affaire).</p>
 <p>Donc nous lancons une premiere fois et nous remplissons les inputs sans trop réfléchir :</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Username:</span><br><span class="line">0xThxmxs</span><br><span class="line">License-Key:</span><br><span class="line">key0</span><br><span class="line">License-Key must be 17 letters long.</span><br><span class="line">Press any key to continue . . .</span><br></pre></td></tr></table></figure>
 
@@ -199,7 +199,8 @@
 <p>C’est fini, on a notre clé !</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Username:</span><br><span class="line">crck_me</span><br><span class="line">License-Key:</span><br><span class="line">$2833-15431-51KEY</span><br><span class="line">Congrats! You cracked it!</span><br></pre></td></tr></table></figure>
 
-<p>Voilà merci d’avoir lu a plus tard si vous avez pas compris une étape ou vous voulez me dire quelque chose –&gt; <a target="_blank" rel="noopener" href="http://localhost:4000/about/#contact">http://localhost:4000/about/#contact</a></p>
+<p>Voilà merci d’avoir lu a plus tard si vous avez pas compris une étape ou vous voulez me dire quelque chose –&gt; <a href="https://0xthxmxs.github.io/about/#contact">https://0xthxmxs.github.io/about/#contact</a></p>
+<p>Merci à Eban pour la relecture 🙂</p>
 
   </div>
 </article>
